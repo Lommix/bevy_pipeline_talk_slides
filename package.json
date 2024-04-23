@@ -1,0 +1,26 @@
+{
+  "name": "bevy_slides",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "watch": "webpack serve --config webpack.config.js --mode development --watch ",
+    "build": "webpack -p"
+  },
+  "author": "lommix",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^7.1.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.6.0",
+    "reveal.js": "^5.1.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.91.0",
+    "wepack-cli": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  }
+}
