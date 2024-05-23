@@ -5,6 +5,8 @@ import Hightlight from "reveal.js/plugin/highlight/highlight.esm";
 
 document.addEventListener("DOMContentLoaded", () => {
     Reveal.initialize({
+        hash: true,
+		autoPlayMedia: true,
         plugins: [Markdown, Note, Hightlight],
     });
 });

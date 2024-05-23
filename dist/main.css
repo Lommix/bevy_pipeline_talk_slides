@@ -1,0 +1,43 @@
+img {
+    margin: auto !important;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.reveal pre code{
+	max-height: 800px;
+}
+
+.test{
+	background:red;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+}
+
+
+section{
+	padding: 1rem 0;
+}
+
+.spin {
+    animation: 4s spin-frames linear infinite;
+}
+
+@keyframes spin-frames {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -2,10 +2,10 @@
 <html lang="de">
     <head>
         <meta charset="utf-8" />
-        <title>Bevy Render Pipeline</title>
-
+        <title>Hook into the Bevy render pipeline</title>
+        <link rel="stylesheet" href="css/tailwind.min.css" />
+        <link rel="stylesheet" href="css/reset.css" />
         <link rel="stylesheet" href="css/reveal.css" />
-        <link rel="stylesheet" href="css/black.css" />
         <link rel="stylesheet" href="css/black.css" />
         <link rel="stylesheet" href="css/monokai.css" />
         <link rel="stylesheet" href="main.css" />
@@ -13,9 +13,35 @@
     <body>
         <div class="reveal">
             <div class="slides">
-                <section data-markdown="slides/cover.md"> </section>
-                <section data-markdown="slides/about.md"> </section>
-                <section data-markdown="slides/intro.md"> </section>
+                <section
+                    data-markdown="slides/intro.md"
+                    data-separator="^\n\n\n"
+                    data-separator-vertical="---"
+                ></section>
+            </div>
+            <div class="slides">
+                <section data-markdown="slides/gpu.md" data-separator="^\n\n\n" data-separator-vertical="---"></section>
+            </div>
+            <div class="slides">
+                <section
+                    data-markdown="slides/bevy.md"
+                    data-separator="^\n\n\n"
+                    data-separator-vertical="---"
+                ></section>
+            </div>
+            <div class="slides">
+                <section
+                    data-markdown="slides/example.md"
+                    data-separator="^\n\n\n"
+                    data-separator-vertical="---"
+                ></section>
+            </div>
+            <div class="slides">
+                <section
+                    data-markdown="slides/outro.md"
+                    data-separator="^\n\n\n"
+                    data-separator-vertical="---"
+                ></section>
             </div>
         </div>
         <script src="main.js"></script>

@@ -1,7 +1,14 @@
-# Bevy Render
+## A hook into the bevy render pipline
 
-```rust []
-fn main(){
-    println!("hello world");
-}
-```
+
+let's find out how to render something in bevy
+
+---
+
+## About me
+
+Just another hobby gamedev
+
+-   https://lommix.com
+-   https://github.com/lommix
+-   https://lommix.com
