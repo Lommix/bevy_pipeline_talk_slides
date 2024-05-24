@@ -2,6 +2,10 @@ img {
     margin: auto !important;
 }
 
+*{
+	font-family: "Fira Code", monospace;
+}
+
 .row {
     display: flex;
     flex-direction: row;

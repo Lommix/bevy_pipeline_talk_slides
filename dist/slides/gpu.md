@@ -8,43 +8,30 @@ The basics of rendering
 
 ---
 
-## Vertices, Indices and Instances
+## Vertices, Indices, and Instances
 
 <img class="" src="img/index.png" alt="">
 
--   Verticies are just points in 3D Space
--   Indicies describe the Order of Connection
--   Instances
-
----
-
 <br/>
 
-## Indecies
-
-<img class="" src="img/vertex_con.png" alt="">
-
-```rust
-[
-    A,
-    B,
-    C,
-    ...
-]
-```
-
-<!-- .element style="width:31rem;" -->
+-   Vertices are just points in 3D Space
+-   Indices describe the Order in which the points are connected
+-   Instances describe how often the same vertex is drawn
 
 ---
 
-## Uv Coordinates
-
-mapping a texture to a triangle
+## UV Mapping
 
 <img class="" src="img/uv.png" alt="">
 
+<br/>
+
+-   Mapping a texture to a triangle
+-   define a position per vertex
+-   the GPU will compute the UV per pixel for you.
+
 ---
 
-## The Pipeline
+## Describing a simple Pipeline
 
 <img class="" src="img/pipeline.png" alt="">
