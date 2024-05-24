@@ -1,10 +1,16 @@
-## Intro to the Render world
+## How does this work in Bevy?
+
+---
+
+## The Render world
+
+![world](img/renderworld.png)
 
 ---
 
 ## Render Graph
 
-Node trait
+![world](img/graph.png)
 
 ---
 
@@ -14,15 +20,15 @@ Configure our goal
 
 ---
 
-## Bindgroups
+## Render Stages
 
-The data we want to pass
+![world](img/stages.png)
 
 ---
 
-## Bevys Macros
+## Bindgroups
 
-AsBindGroup, ShaderType
+The data we want to pass
 
 ---
 
@@ -35,12 +41,6 @@ Copy the data we need into the Render World
 ## Queue
 
 For each camera view check check if our object is visible, if so, add it to its phase
-
----
-
-## Phase Item
-
-the phase items describes a an entity that will be rendered on a specific camera view
 
 ---
 

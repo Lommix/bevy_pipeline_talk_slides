@@ -1,6 +1,8 @@
 ## Example
 
-<video data-autoplay src="assets/example.mp4"></video>
+<div class="row">
+    <video src="assets/example.webm" autoplay=true loop></video>
+</div>
 
 ---
 
@@ -34,38 +36,183 @@ pub struct CustomPipelineKey;
 
 ---
 
-# A new Plugin
+## The Mesh
 
-```rust [1-2|4-6|3,4|9|10|11|13-18|20-27]
-pub struct MyRenderPlugin;
-impl Plugin for MyRenderPlugin {
-    fn build(&self, app: &mut App) {
-        let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
-            return;
-        };
+```rust
+#[derive(Resource)]
+pub struct FixedQuadMesh {
+    vertex_buffer: BufferVec<Vec3>,
+    index_buffer: BufferVec<u32>,
+}
+```
 
-        render_app
-            .add_render_command::<Transparent2d, MyDrawCommand>()
-            .init_resource::<SpecializedRenderPipelines<CustomPipeline>>()
-            .add_systems(ExtractSchedule, extract)
-            .add_systems(
-                Render,
-                (
-                    queue.in_set(RenderSet::Queue),
-                    prepare.in_set(RenderSet::PrepareBindGroups),
-                ),
-            );
-    }
-    fn finish(&self, app: &mut App) {
-        let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
-            return;
-        };
+<!-- .element class="fragment" -->
 
-        render_app.init_resource::<CustomPipeline>();
-        render_app.init_resource::<FixedQuadMesh>();
+```rust [|3-4|6-7|9-15|17-22]
+impl FromWorld for FixedQuadMesh {
+    fn from_world(world: &mut World) -> Self {
+        let render_device = world.resource::<RenderDevice>();
+        let render_queue = world.resource::<RenderQueue>();
+
+        let mut vertex_buffer = BufferVec::<Vec3>::new(BufferUsages::VERTEX);
+        let mut index_buffer = BufferVec::<u32>::new(BufferUsages::INDEX);
+
+        vertex_buffer.extend([
+            Vec3::new(0., 0., 0.),
+            Vec3::new(1., 0., 0.),
+            Vec3::new(1., 1., 0.),
+            Vec3::new(0., 1., 0.),
+        ]);
+        vertex_buffer.write_buffer(render_device, render_queue);
+
+        index_buffer.extend([
+            0, 1, 2, // first triangle
+            0, 2, 3, // second triangle
+        ]);
+        index_buffer.write_buffer(render_device, render_queue);
+
+        Self {
+            vertex_buffer,
+            index_buffer,
+        }
     }
 }
 ```
+
+<!-- .element class="fragment" -->
+
+---
+
+# Configuring the Pipeline
+
+```rust [|3-4|6-15|17]
+impl FromWorld for CustomPipeline {
+    fn from_world(world: &mut World) -> Self {
+        let server = world.resource::<AssetServer>();
+        let render_device = world.resource::<RenderDevice>();
+
+        let view_layout = render_device.create_bind_group_layout(
+            "mesh2d_view_layout",
+            &BindGroupLayoutEntries::sequential(
+                ShaderStages::VERTEX_FRAGMENT,
+                (
+                    uniform_buffer::<ViewUniform>(true),
+                    uniform_buffer::<GlobalsUniform>(false),
+                ),
+            ),
+        );
+
+        let uniform_layout = CustomSprite::bind_group_layout(render_device);
+
+        Self {
+            view_layout,
+            uniform_layout,
+            shader: server.load("shader.wgsl"),
+        }
+    }
+}
+```
+
+<!-- .element class="fragment" -->
+
+---
+
+```rust [|1-2|10|12-15|16|17|18-19|20|22-32|34-59|60|64-68|70-78|81-85]
+#[derive(PartialEq, Eq, Clone, Hash)]
+pub struct CustomPipelineKey;
+
+impl SpecializedRenderPipeline for CustomPipeline {
+    type Key = CustomPipelineKey;
+
+    #[rustfmt::skip]
+    fn specialize(&self, _key: Self::Key) -> RenderPipelineDescriptor {
+
+        RenderPipelineDescriptor {
+            label: Some("my pipeline".into()),
+            layout: vec![
+                self.view_layout.clone(),
+                self.uniform_layout.clone()
+            ],
+            vertex: VertexState {
+                shader: self.shader.clone(),
+                shader_defs: vec![],
+                entry_point: "vertex".into(),
+                buffers: vec![
+                    // vertex buffer
+                    VertexBufferLayout {
+                        array_stride: 12,
+                        step_mode: VertexStepMode::Vertex,
+                        attributes: vec![
+                            VertexAttribute{
+                                format: VertexFormat::Float32x3,
+                                offset: 0,
+                                shader_location: 0
+                            }
+                        ]
+                    },
+                    // instance buffer
+                    VertexBufferLayout {
+                        array_stride: 48,
+                        step_mode: VertexStepMode::Instance,
+                        attributes: vec![
+                            // translation
+                            VertexAttribute {
+                                format: VertexFormat::Float32x4,
+                                offset: 0,
+                                shader_location: 1,
+                            },
+                            // rotation
+                            VertexAttribute {
+                                format: VertexFormat::Float32x4,
+                                offset: 16,
+                                shader_location: 2,
+                            },
+                            // scale
+                            VertexAttribute {
+                                format: VertexFormat::Float32x4,
+                                offset: 32,
+                                shader_location: 3,
+                            },
+                        ],
+                    }
+                ],
+            },
+            fragment: Some(FragmentState {
+                shader: self.shader.clone(),
+                shader_defs: vec![],
+                entry_point: "fragment".into(),
+                targets: vec![Some(ColorTargetState {
+                    format: TextureFormat::Rgba8UnormSrgb,
+                    blend: Some(BlendState::ALPHA_BLENDING),
+                    write_mask: ColorWrites::ALL,
+                })],
+            }),
+            primitive: PrimitiveState {
+                front_face: FrontFace::Ccw,
+                cull_mode: None,
+                unclipped_depth: false,
+                polygon_mode: PolygonMode::Fill,
+                conservative: false,
+                topology: PrimitiveTopology::TriangleList,
+                strip_index_format: None,
+            },
+            push_constant_ranges: vec![],
+            depth_stencil: None,
+            multisample: MultisampleState{
+                count: 4,
+                mask: !0,
+                alpha_to_coverage_enabled: false,
+            },
+        }
+    }
+}
+```
+
+---
+
+Our Pipeline is defined, let's run it!
+
+![](img/stages.png)
 
 <!-- .element class="fragment" -->
 
@@ -147,14 +294,6 @@ fn queue(
 ```
 
 <!-- .element class="fragment" -->
-
----
-
-## Phase Item
-
-```rust
-
-```
 
 ---
 
@@ -293,6 +432,43 @@ impl<P: PhaseItem> RenderCommand<P> for DrawSprite {
 
 ---
 
+# Putting it all together
+
+```rust [|1-2|4-6|3,4|9-10|11|13-18|20-27]
+pub struct MyRenderPlugin;
+impl Plugin for MyRenderPlugin {
+    fn build(&self, app: &mut App) {
+        let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
+            return;
+        };
+
+        render_app
+            .add_render_command::<Transparent2d, MyDrawCommand>()
+            .init_resource::<SpecializedRenderPipelines<CustomPipeline>>()
+            .add_systems(ExtractSchedule, extract)
+            .add_systems(
+                Render,
+                (
+                    queue.in_set(RenderSet::Queue),
+                    prepare.in_set(RenderSet::PrepareBindGroups),
+                ),
+            );
+    }
+    fn finish(&self, app: &mut App) {
+        let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
+            return;
+        };
+
+        render_app.init_resource::<CustomPipeline>();
+        render_app.init_resource::<FixedQuadMesh>();
+    }
+}
+```
+
+<!-- .element class="fragment" -->
+
+---
+
 ## The shader
 
 The Code that runs on the GPU
@@ -309,7 +485,7 @@ The Code that runs on the GPU
 @group(1) @binding(1) var texture_sampler: sampler;
 ```
 
----
+<!-- .element class="fragment" -->
 
 ```wgsl
 struct VertexInput{
@@ -325,7 +501,7 @@ struct VertexInput{
 }
 ```
 
----
+<!-- .element class="fragment" -->
 
 ```wgsl
 struct VertexOutput {
@@ -334,9 +510,13 @@ struct VertexOutput {
 };
 ```
 
+<!-- .element class="fragment" -->
+
 ---
 
-```wgsl
+## The Vertex Stage
+
+```wgsl [|5-9|12|15|18|21-24|22]
 @vertex
 fn vertex(in: VertexInput) -> VertexOutput{
 	var out : VertexOutput;
@@ -371,9 +551,37 @@ fn vertex(in: VertexInput) -> VertexOutput{
 
 ---
 
+## The Fragment Stage
+
 ```wgsl
 @fragment
 fn fragment(in : VertexOutput) -> @location(0) vec4<f32> {
 	return textureSample(texture, texture_sampler, in.uv);
 }
 ```
+
+---
+
+```rust
+fn setup(mut cmd: Commands, server: Res<AssetServer>){
+    cmd.spawn(Camera2dBundle::default());
+    cmd.spawn((
+        SpatialBundle::default(),
+        CustomSprite {
+            texture: server.load("icon.png"),
+        },
+    ));
+}
+```
+
+---
+
+<div class="row">
+    <video src="assets/example.webm" autoplay=true loop></video>
+</div>
+
+<br />
+
+## Thanks for listing
+
+[github.com/Lommix/bevy_pipeline_example]()

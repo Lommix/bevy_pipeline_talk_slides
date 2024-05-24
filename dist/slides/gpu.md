@@ -8,12 +8,13 @@ The basics of rendering
 
 ---
 
-## Vertecies
+## Vertices, Indices and Instances
 
-<img class="" src="img/vertex.png" alt="">
+<img class="" src="img/index.png" alt="">
 
-<br/>
-
+-   Verticies are just points in 3D Space
+-   Indicies describe the Order of Connection
+-   Instances
 
 ---
 
@@ -36,40 +37,14 @@ The basics of rendering
 
 ---
 
-## Uv
+## Uv Coordinates
+
+mapping a texture to a triangle
+
+<img class="" src="img/uv.png" alt="">
 
 ---
 
-## Describe what we want.
+## The Pipeline
 
 <img class="" src="img/pipeline.png" alt="">
-
----
-
-## The most import Stages
-
-Vertex, Fragement & Compute
-
----
-
-## Pipeline
-
-Describe your connection
-
----
-
-## Vertex
-
-do some calc on each vertex
-
----
-
-## Rasterization
-
-project 3d scene into 2d screen space
-
----
-
-## Fragment
-
-fn for each pixel
