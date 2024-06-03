@@ -1,4 +1,4 @@
-## A hook into the bevy render pipline
+## Hooking into the bevy render pipeline
 
 ---
 

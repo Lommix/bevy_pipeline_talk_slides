@@ -2,7 +2,7 @@
 
 <br/>
 
-The basics of rendering
+POINTS -> TRIANGLES -> PIXEL -> COLOR
 
 <img class="" src="img/overview.png" alt="">
 
@@ -14,9 +14,9 @@ The basics of rendering
 
 <br/>
 
--   Vertices are just points in 3D Space
--   Indices describe the Order in which the points are connected
--   Instances describe how often the same vertex is drawn
+-   Vertices are just points in 3D Space <!-- .element class="fragment" -->
+-   Indices describe the Order in which the points are connected <!-- .element class="fragment" -->
+-   Instances describe how often the same vertex is drawn <!-- .element class="fragment" -->
 
 ---
 
@@ -32,6 +32,6 @@ The basics of rendering
 
 ---
 
-## Describing a simple Pipeline
+## The Pipeline
 
 <img class="" src="img/pipeline.png" alt="">

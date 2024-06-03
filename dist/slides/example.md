@@ -119,7 +119,7 @@ impl FromWorld for CustomPipeline {
 
 ---
 
-```rust [|1-2|10|12-15|16|17|18-19|20|22-32|34-59|60|64-68|70-78|81-85]
+```rust [|1-2|10-15|16-20|22-32|34-59|60-68|70-78|81-85]
 #[derive(PartialEq, Eq, Clone, Hash)]
 pub struct CustomPipelineKey;
 
@@ -393,7 +393,7 @@ impl<P: PhaseItem, const I: usize> RenderCommand<P> for SetBindGroup<I> {
 
 passing our vertex data
 
-```rust [3-5|15-17|19|21-23|25-27|29|30|31|32]
+```rust [3-5|15-17|19|21-23|25-27|29-31|32]
 pub struct DrawSprite;
 impl<P: PhaseItem> RenderCommand<P> for DrawSprite {
     type Param = SRes<FixedQuadMesh>;
@@ -436,7 +436,7 @@ impl<P: PhaseItem> RenderCommand<P> for DrawSprite {
 
 # Putting it all together
 
-```rust [|1-2|4-6|3,4|9-10|11|13-18|20-27]
+```rust [|4-6|8-10|11|13-18|20-27]
 pub struct MyRenderPlugin;
 impl Plugin for MyRenderPlugin {
     fn build(&self, app: &mut App) {

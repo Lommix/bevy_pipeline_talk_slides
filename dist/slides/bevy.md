@@ -32,18 +32,14 @@ pub trait Node: Downcast + Send + Sync + 'static {
 
 ---
 
-## The Pipeline
-
--   Define the memory layout on the GPU
--   Define how the data is interpreted
-
----
+## Inserting a Pipeline
 
 ![world](img/inject.png)
 
 ---
 
-## Render world Schedules
+
+## Step by Step
 
 ![world](img/stages.png)
 
@@ -73,11 +69,7 @@ Transform the queued data into WGPU buffers
 
 ---
 
-## Render Command
-
--   Activate our pipeline
--   bind our data
--   send the draw call
+## Draw
 
 ```rust
 pub type DrawSprite = (
@@ -87,5 +79,12 @@ pub type DrawSprite = (
     DrawSpriteBatch,
 );
 ```
+<!-- .element class="" style="width:35rem" -->
 
-<!-- .element class="fragment" style="width:35rem" -->
+<br/>
+
+-   Activate our pipeline
+-   bind our data
+-   send the draw call
+
+
